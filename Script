@@ -7,7 +7,7 @@ local player = Players.LocalPlayer
 
 -- Create the main ScreenGui
 local gui = Instance.new("ScreenGui")
-gui.Name = "GGui" -- Changed to reflect the new key
+gui.Name = "GGui" -- Changed from "CGui" to "GGui"
 gui.ResetOnSpawn = false -- Ensure the GUI doesn't disappear on reset
 gui.Parent = CoreGui -- Set the GUI parent to CoreGui for the nicer look
 
@@ -30,13 +30,13 @@ UICornerOuter.Parent = frame
 
 -- Create the main button
 local gButton = Instance.new("TextButton")
-gButton.Name = "GButton" -- Changed to reflect the new key
+gButton.Name = "GButton" -- Changed from "CButton" to "GButton"
 gButton.Size = UDim2.new(0, 180, 0, 60)
 gButton.Position = UDim2.new(0.5, -90, 0.5, -30)
 gButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark grey background
 gButton.BorderSizePixel = 0
 gButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-gButton.Text = "G Gui Off" -- Initial button text
+gButton.Text = "G Gui" -- Changed from "C Gui" to "G Gui"
 gButton.Font = Enum.Font.SourceSans
 gButton.TextSize = 24
 gButton.TextScaled = true -- Makes the text larger
@@ -47,44 +47,45 @@ local UICornerButton = Instance.new("UICorner")
 UICornerButton.CornerRadius = UDim.new(0, 10)
 UICornerButton.Parent = gButton
 
--- Toggle state
-local isGuiOn = false
-
 -- Button click event
 gButton.MouseButton1Click:Connect(function()
-    isGuiOn = not isGuiOn
-    gButton.Text = isGuiOn and "G Gui On" or "G Gui Off"
-
-    -- Trigger the G key event
     local vim = game:GetService("VirtualInputManager")
-    vim:SendKeyEvent(true, Enum.KeyCode.G, false, game)
+    vim:SendKeyEvent(true, Enum.KeyCode.G, false, game) -- Changed from "C" to "G"
 end)
 
--- Key press event to toggle G Gui
+-- Key press event to send the key press
 UserInputService.InputBegan:Connect(function(input, isProcessed)
     if isProcessed then return end
-    if input.KeyCode == Enum.KeyCode.G then -- Key to toggle
-        isGuiOn = not isGuiOn
-        gButton.Text = isGuiOn and "G Gui On" or "G Gui Off"
+    if input.KeyCode == Enum.KeyCode.G then -- Key to send
+        local vim = game:GetService("VirtualInputManager")
+        vim:SendKeyEvent(true, Enum.KeyCode.G, false, game) -- Changed from "C" to "G"
     end
 end)
+
+-- Variable to track if the notification has been shown
+local notificationShown = false
 
 -- Chat command to kill the GUI
 player.Chatted:Connect(function(message)
     if message:lower() == "/e killgui" then
-        gui:Destroy()
-        -- Display notification
-        StarterGui:SetCore("SendNotification", {
-            Title = "Info",
-            Text = "Type /e killgui To Kill The Gui",
-            Duration = 15, -- 15 seconds notification
-        })
+        if gui then
+            gui:Destroy()
+            if not notificationShown then
+                -- Display notification
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Info";
+                    Text = "GUI has been removed.";
+                    Duration = 15; -- 15 seconds notification
+                })
+                notificationShown = true
+            end
+        end
     end
 end)
 
 -- Display notification when the GUI is created
 StarterGui:SetCore("SendNotification", {
-    Title = "Info",
-    Text = "Type /e killgui To Kill The Gui",
-    Duration = 15, -- 15 seconds notification
+    Title = "Info";
+    Text = "Type /e killgui To Kill The Gui";
+    Duration = 15; -- 15 seconds notification
 })
