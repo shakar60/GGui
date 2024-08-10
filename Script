@@ -5,69 +5,86 @@ local StarterGui = game:GetService("StarterGui")
 
 local player = Players.LocalPlayer
 
--- Create a GUI
-local Gui = Instance.new("ScreenGui")
-Gui.Parent = CoreGui
+-- Create the main ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "GGui" -- Changed to reflect the new key
+gui.ResetOnSpawn = false -- Ensure the GUI doesn't disappear on reset
+gui.Parent = CoreGui -- Set the GUI parent to CoreGui for the nicer look
 
-local OuterFrame = Instance.new("Frame")
-OuterFrame.Size = UDim2.new(0, 200, 0, 100) -- Adjusted size
-OuterFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
-OuterFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
-OuterFrame.BackgroundTransparency = 0.5 -- Slightly transparent
-OuterFrame.BorderSizePixel = 2
-OuterFrame.BorderColor3 = Color3.fromRGB(128, 128, 128) -- Grey outline
-OuterFrame.Active = true
-OuterFrame.Draggable = true
-OuterFrame.Parent = Gui
+-- Create the main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
+frame.BackgroundTransparency = 0.5 -- Slightly transparent
+frame.BorderSizePixel = 2
+frame.BorderColor3 = Color3.fromRGB(128, 128, 128) -- Grey outline
+frame.Active = true
+frame.Draggable = true -- Make the frame draggable
+frame.Parent = gui
 
--- Add rounded corners to the outer frame
+-- Add rounded corners to the main frame
 local UICornerOuter = Instance.new("UICorner")
 UICornerOuter.CornerRadius = UDim.new(0, 20)
-UICornerOuter.Parent = OuterFrame
+UICornerOuter.Parent = frame
 
-local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0, 180, 0, 60) -- Adjusted size
-Button.Position = UDim2.new(0.5, -90, 0.5, -30)
-Button.Text = "C Gui Off" -- Updated text
-Button.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-Button.TextScaled = true -- Makes the text larger
-Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark grey background
-Button.BorderSizePixel = 0
-Button.Parent = OuterFrame
+-- Create the main button
+local gButton = Instance.new("TextButton")
+gButton.Name = "GButton" -- Changed to reflect the new key
+gButton.Size = UDim2.new(0, 180, 0, 60)
+gButton.Position = UDim2.new(0.5, -90, 0.5, -30)
+gButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark grey background
+gButton.BorderSizePixel = 0
+gButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+gButton.Text = "G Gui Off" -- Initial button text
+gButton.Font = Enum.Font.SourceSans
+gButton.TextSize = 24
+gButton.TextScaled = true -- Makes the text larger
+gButton.Parent = frame
 
 -- Add rounded corners to the button
 local UICornerButton = Instance.new("UICorner")
 UICornerButton.CornerRadius = UDim.new(0, 10)
-UICornerButton.Parent = Button
+UICornerButton.Parent = gButton
 
 -- Toggle state
-local isCGuiOn = false -- Updated variable name
+local isGuiOn = false
 
 -- Button click event
-Button.MouseButton1Click:Connect(function()
-    isCGuiOn = not isCGuiOn
-    Button.Text = isCGuiOn and "C Gui On" or "C Gui Off" -- Updated text
+gButton.MouseButton1Click:Connect(function()
+    isGuiOn = not isGuiOn
+    gButton.Text = isGuiOn and "G Gui On" or "G Gui Off"
+
+    -- Trigger the G key event
+    local vim = game:GetService("VirtualInputManager")
+    vim:SendKeyEvent(true, Enum.KeyCode.G, false, game)
 end)
 
--- Key press event to toggle C Gui
+-- Key press event to toggle G Gui
 UserInputService.InputBegan:Connect(function(input, isProcessed)
     if isProcessed then return end
-    if input.KeyCode == Enum.KeyCode.C then -- Key to toggle
-        isCGuiOn = not isCGuiOn
-        Button.Text = isCGuiOn and "C Gui On" or "C Gui Off" -- Updated text
+    if input.KeyCode == Enum.KeyCode.G then -- Key to toggle
+        isGuiOn = not isGuiOn
+        gButton.Text = isGuiOn and "G Gui On" or "G Gui Off"
     end
 end)
 
--- Chat command to destroy GUI
+-- Chat command to kill the GUI
 player.Chatted:Connect(function(message)
     if message:lower() == "/e killgui" then
-        Gui:Destroy()
+        gui:Destroy()
+        -- Display notification
+        StarterGui:SetCore("SendNotification", {
+            Title = "Info",
+            Text = "Type /e killgui To Kill The Gui",
+            Duration = 15, -- 15 seconds notification
+        })
     end
 end)
 
--- Show notification
+-- Display notification when the GUI is created
 StarterGui:SetCore("SendNotification", {
     Title = "Info",
-    Text = "Type /e killgui To Destroy The C Gui", -- Updated text
-    Duration = 30,
+    Text = "Type /e killgui To Kill The Gui",
+    Duration = 15, -- 15 seconds notification
 })
